@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Remote Volume Limiter</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0">
+        <style type="text/css">
+			body {
+				background-color: darkgray;
+				font-family: Helvetica;
+				color: #2085ef;
+			}
+
+			.text {
+			    display: flex;
+                align-items: center;
+                flex-direction: column;
+                justify-content: center;
+                align-content: center;
+                /*margin-top: 30vh;*/
+			}
+
+            .center {
+                margin: 0;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                -ms-transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%);
+            }
+
+            .boxv {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                justify-content: center;
+                align-content: center;
+            }
+
+            .boxh {
+                display: none;
+                align-items: center;
+                justify-content: center;
+                align-content: center;
+            }
+
+            input {
+                margin: 1em;
+                padding: 0.75em;
+                font-size: 400%;
+                height: 5vh;
+                object-fit: contain;
+				border-radius: 3em;
+				background-color: gray;
+				outline: none;
+            }
+
+            input.button {
+                font-size: 100%;
+            }
+
+            input[type=range] {
+                font-size: 100%;
+                width: 175px;
+                height: 8px;
+                padding: 5px;
+            }
+
+            input[type=range].vertical {
+                writing-mode: bt-lr; /* IE */
+                -webkit-appearance: slider-vertical; /* Chromium */
+                width: 8px;
+                height: 175px;
+                padding: 5px;
+            }
+			
+			input:active[type=image] {
+				padding: 0.8em;
+				background: none;
+				background-color: gray;
+			}
+
+            @media only screen and (min-aspect-ratio: 4/3) {
+                /*.text {
+                    margin-top: 30vh;
+                }*/
+
+                h3 {
+                    color: green;
+                }
+
+                .boxv {
+                    display: none;
+                }
+
+                .boxh {
+                    display: flex;
+                }
+
+                .center {
+                    margin: 0;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    -ms-transform: translate(-50%, -50%);
+                    transform: translate(-50%, -50%);
+                }
+            }
+        </style>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script type="text/javascript">
+            function onLoad() {
+                updateInterface();
+            }
+            function asyncVolume(e) {
+                console.log(e.id);
+
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/" + e.id, false);
+                xhr.send();
+
+                updateInterface();
+                return false;
+            }
+            function onSliderDrag(value){
+                updateVolumeText(value);
+                asyncSetVolume(value);
+            }
+            function asyncSetVolume(volume) {
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "/set-volume", true);
+                xhr.send("volume=" + volume);
+                return false;
+            }
+
+            function updateVolumeText(value){
+                document.getElementById("volume").innerHTML = value + "";
+            }
+            function updateInterface(){
+                xhr = new XMLHttpRequest();
+                xhr.open("GET", "/get-volume", true);
+                var sliderv = $("#volume-slider-v");
+                var sliderh = $("#volume-slider-h");
+                xhr.onreadystatechange = function(){
+                    if (xhr.readyState == 4){ //finished
+                        if (xhr.status == 200) { //found
+							var responce = xhr.responseText;
+							var volumes = responce.split('-');
+                            var vol = parseInt(volumes[1]);
+							var maxVolume = parseInt(volumes[0]);
+                            document.getElementById("volume").innerHTML = vol + "";
+							sliderh.prop("max",  maxVolume);
+							sliderh.prop("value",  vol);
+							sliderv.prop("max",  maxVolume);
+							sliderv.prop("value",  vol);
+							setTimeout(() =>  {updateInterface();}, 1000);
+							
+                        } else {
+                            document.getElementById("volume").innerHTML = "ERROR";
+                        }
+                    } else {
+                        document.getElementById("volume").innerHTML = "loading...";
+                    }
+                }
+                xhr.send();
+                return;
+            }
+            window.onload = onLoad;
+        </script>
+    </head>
+    <body>
+    <div class="center">
+        <div class="text">
+            <h3 id="volume"></h3>
+        </div>
+        <div class="boxv" >
+            <input class="button" type="image" name="volume-up" id="volume-up" value="volume-up" onclick="return asyncVolume(this);" src="/volume-up.png"/>
+            <input type="range" class="vertical" step="1" min="0" max="100" value="0" id="volume-slider-v"  oninput="updateVolumeText(this.value)" onchange="onSliderDrag(this.value)" >
+            <input class="button" type="image" name="volume-down" id="volume-down" value="volume-down"  onclick="return asyncVolume(this);" src="/volume-down.png" />
+        </div>
+        <div class="boxh" >
+            <input class="button" type="image" name="volume-down" id="volume-down" value="volume-down"  onclick="return asyncVolume(this);" src="/volume-down.png" />
+            <input type="range" class="horizontal" step="1" min="0" max="100" value="0" id="volume-slider-h"  oninput="updateVolumeText(this.value)" onchange="onSliderDrag(this.value)">
+            <input class="button" type="image" name="volume-up" id="volume-up" value="volume-up" onclick="return asyncVolume(this);" src="/volume-up.png"/>
+
+        </div>
+    </div>
+    </body>
+</html>

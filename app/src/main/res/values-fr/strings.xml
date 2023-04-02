@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Limiteur de volume à distance</string>
+    <string name="running_indicator">Indicateur de fonctionnement</string>*
+    <string name="ongoing_notification_title">@string/app_name</string>
+    <string name="ongoing_notification_text">En attente du réseau local...</string>
+    <!-- TODO: Translate -->
+</resources>

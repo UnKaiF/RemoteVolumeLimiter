@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Remote Volume Limiter</string>
+    <string name="running_indicator">Running indicator</string>
+    <string name="ongoing_notification_title">@string/app_name</string>
+    <string name="ongoing_notification_text">Waiting for local network...</string>
+
+</resources>
