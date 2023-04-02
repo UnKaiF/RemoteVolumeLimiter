@@ -5,8 +5,7 @@
  <b>An app that allows you to adjust maximum sound volume of your Android device from any device in same local network, that has a web browser.</b>
 </p>
 
-This project is a fork of [Tanaka42's WebRemoteVolumeControl](https://github.com/tanaka42/androidapp-webremotevolumecontrol)
-and [Chgv99's Web Remote Volume Control](https://github.com/Chgv99/web-remote-volume-control) that implements a couple of features such as:
+This project is a fork of [Chgv99's Web Remote Volume Control](https://github.com/Chgv99/web-remote-volume-control) that implements a couple of features such as:
 - Maximum volume slider
 - Maximum volume indicator and slider updated dynamically 
 - Allow mute (zero volume)
