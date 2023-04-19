@@ -12,6 +12,10 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.accessibility.AccessibilityEvent;
 import androidx.core.app.NotificationCompat;
+
+import java.util.Calendar;
+import java.util.Date;
+
 import static com.basisdas1.remotevolumelimiter.AppTag.TAG;
 
 
@@ -32,7 +36,7 @@ public class SilenceAccessibilityService extends AccessibilityService
 	@Override
 	public void onInterrupt()
 		{
-
+		Log.e(TAG, "Service interrupted " + java.text.DateFormat.getDateTimeInstance().format(new Date()));
 		}
 
 	@Override
@@ -73,6 +77,13 @@ public class SilenceAccessibilityService extends AccessibilityService
 				.build();
 
 		startForeground(SERVICE_NOTIFICATION_ID, notification);
+		}
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId)
+		{
+		super.onStartCommand(intent, 0, startId);
+		return START_STICKY;
 		}
 
 	@Override
